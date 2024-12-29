@@ -1,8 +1,6 @@
 package lexer
 
 import (
-	"fmt"
-
 	"github.com/anitabee/monkey-interpreter/cmd/token"
 )
 
@@ -76,6 +74,12 @@ func (l *Lexer) NextToken() token.Token {
 			// we call readChar() which moves the position to the next character.
 			// So we don't need to call readChar() after the switch statement again.
 			return tok
+		}
+		if isDigit(l.ch) {
+			tok.Type = token.INT
+			tok.Literal = l.readNumber()
+			return tok
+
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch)
 		}
@@ -88,12 +92,23 @@ func (l *Lexer) NextToken() token.Token {
 }
 
 func newToken(tokenType token.TokenType, ch byte) token.Token {
-	fmt.Println("newToken: tokenType =", tokenType, "ch =", string(ch))
+	// fmt.Println("newToken: tokenType =", tokenType, "ch =", string(ch))
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
 func isLetter(ch byte) bool {
+	// ASCII values for a-z, A-Z and _
+	// a-z: 97-122
+	// A-Z: 65-90
+	// _: 95
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+}
+
+func isDigit(ch byte) bool {
+	// ASCII values for 0-9
+	// 0: 48
+	// 9: 57
+	return '0' <= ch && ch <= '9'
 }
 
 func (l *Lexer) readIdentifier() string {
@@ -102,6 +117,15 @@ func (l *Lexer) readIdentifier() string {
 		l.readChar()
 	}
 	return l.input[postion:l.position]
+}
+
+func (l *Lexer) readNumber() string {
+	position := l.position
+	// we support only integers for now
+	for isDigit(l.ch) {
+		l.readChar()
+	}
+	return l.input[position:l.position]
 }
 
 func (l *Lexer) skipWhitespace() {
