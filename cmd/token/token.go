@@ -8,17 +8,24 @@ type Token struct {
 }
 
 // Define possible TokenTypes
-const ( 
+const (
 	ILLEGAL = "ILLEGAL" // signifies a token/character we don't know about
 	EOF     = "EOF"     // signifies end of file, which will tell the parser to stop
 
 	// Identifiers + literals
 	IDENT = "IDENT" // add, foobar, x, y, ...
-	INT   = "INT"   // 1343456 
+	INT   = "INT"   // 1343456
 
 	// Operators
-	ASSIGN = "="
-	PLUS   = "+"
+	ASSIGN   = "="
+	PLUS     = "+"
+	MINUS    = "-"
+	BANG     = "!"
+	ASTERISK = "*"
+	SLASH    = "/"
+
+	LT = "<"
+	GT = ">"
 
 	// Delimiters
 	COMMA     = ","
