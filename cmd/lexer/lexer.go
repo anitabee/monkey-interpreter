@@ -31,7 +31,6 @@ func (l *Lexer) readChar() {
 	l.readPosition += 1         // move the readPosition to the next character
 }
 
-
 func (l *Lexer) peekChar() byte {
 	if l.readPosition >= len(l.input) {
 		return 0
@@ -49,6 +48,16 @@ func (l *Lexer) NextToken() token.Token {
 
 	case '=':
 		tok = newToken(token.ASSIGN, l.ch)
+		// todo: abstarct behaviour in a method called readTwoCharToken
+		if l.peekChar() == '=' {
+			ch := l.ch // we save the current character in a local variable before reading the next character, 
+			// in this way we don't lose the current character and can safely advance the lexer so it leaves
+			// the NextToken() with l.position and l.readPosition in correct state.
+			l.readChar()
+			tok = token.Token{Type: token.EQ, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = newToken(token.ASSIGN, l.ch)
+		}
 
 	case '+':
 		tok = newToken(token.PLUS, l.ch)
@@ -57,8 +66,13 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.MINUS, l.ch)
 
 	case '!':
-		tok = newToken(token.BANG, l.ch)
-
+		if l.peekChar() == '=' {
+			ch := l.ch 
+			l.readChar()
+			tok = token.Token{Type: token.NOT_EQ, Literal: string(ch) + string(l.ch)}
+		} else {
+			tok = newToken(token.BANG, l.ch)
+		}
 	case '/':
 		tok = newToken(token.SLASH, l.ch)
 
@@ -119,7 +133,7 @@ func (l *Lexer) NextToken() token.Token {
 }
 
 func newToken(tokenType token.TokenType, ch byte) token.Token {
-	// fmt.Println("newToken: tokenType =", tokenType, "ch =", string(ch))
+	// fmt.Printf("newToken: %v, %v\n", tokenType, string(ch))
 	return token.Token{Type: tokenType, Literal: string(ch)}
 }
 
