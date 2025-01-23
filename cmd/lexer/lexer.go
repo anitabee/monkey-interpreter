@@ -49,8 +49,9 @@ func (l *Lexer) NextToken() token.Token {
 	case '=':
 		tok = newToken(token.ASSIGN, l.ch)
 		// todo: abstarct behaviour in a method called readTwoCharToken
-		if l.peekChar() == '=' {
-			ch := l.ch // we save the current character in a local variable before reading the next character, 
+		bla := l.peekChar()
+		if bla == '=' {
+			ch := l.ch // we save the current character in a local variable before reading the next character,
 			// in this way we don't lose the current character and can safely advance the lexer so it leaves
 			// the NextToken() with l.position and l.readPosition in correct state.
 			l.readChar()
@@ -67,7 +68,7 @@ func (l *Lexer) NextToken() token.Token {
 
 	case '!':
 		if l.peekChar() == '=' {
-			ch := l.ch 
+			ch := l.ch
 			l.readChar()
 			tok = token.Token{Type: token.NOT_EQ, Literal: string(ch) + string(l.ch)}
 		} else {
